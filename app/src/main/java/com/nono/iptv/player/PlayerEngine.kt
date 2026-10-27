@@ -1,9 +1,11 @@
 package com.nono.iptv.player
 
 import android.content.Context
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.util.UnstableApi
 import com.nono.iptv.util.DebugLog
 import androidx.media3.datasource.DataSource
@@ -45,6 +47,8 @@ class PlayerEngine(
         private set
 
     private var trackSelector: DefaultTrackSelector? = null
+    private var subsOn = false
+    private var audioIdx = 0
 
     fun initialize(): ExoPlayer {
         player?.let { return it }
@@ -98,6 +102,33 @@ class PlayerEngine(
         p.setMediaItem(MediaItem.fromUri(streamUrl))
         p.prepare()
         p.playWhenReady = true
+    }
+
+    /** Toggle subtitle (text) tracks on/off. Returns the new state. */
+    fun toggleSubtitles(): Boolean {
+        val sel = trackSelector ?: return false
+        subsOn = !subsOn
+        sel.setParameters(
+            sel.buildUponParameters()
+                .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, !subsOn)
+                .setSelectUndeterminedTextLanguage(subsOn)
+                .build()
+        )
+        return subsOn
+    }
+
+    /** Cycle to the next available audio track. Returns a short label for it. */
+    fun cycleAudioTrack(): String {
+        val p = player ?: return "Audio"
+        val groups = p.currentTracks.groups.filter { it.type == C.TRACK_TYPE_AUDIO }
+        if (groups.isEmpty()) return "Audio"
+        audioIdx = (audioIdx + 1) % groups.size
+        val group = groups[audioIdx].mediaTrackGroup
+        p.trackSelectionParameters = p.trackSelectionParameters.buildUpon()
+            .setOverrideForType(TrackSelectionOverride(group, 0))
+            .build()
+        val f = group.getFormat(0)
+        return f.label ?: f.language?.uppercase() ?: "Audio ${audioIdx + 1}"
     }
 
     fun stop() { player?.stop() }

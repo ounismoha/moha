@@ -27,4 +27,28 @@
         <item name="android:drawableTint">@color/nav_text</item>
         <item name="android:duplicateParentState">false</item>
     </style>
+
+    <!-- Full-screen player control button: icon on top, label below, soft focus pill. -->
+    <style name="PlayerCtrl">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/row_item_bg</item>
+        <item name="android:minWidth">72dp</item>
+        <item name="android:paddingHorizontal">10dp</item>
+        <item name="android:paddingVertical">10dp</item>
+        <item name="android:layout_marginHorizontal">2dp</item>
+    </style>
+
+    <style name="PlayerCtrlLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:maxLines">1</item>
+    </style>
 </resources>

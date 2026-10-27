@@ -46,7 +46,8 @@ class CatalogFragment : Fragment(R.layout.fragment_catalog) {
 
         categoriesView.layoutManager = LinearLayoutManager(requireContext())
         categoriesView.adapter = categoryAdapter
-        postersView.layoutManager = GridLayoutManager(requireContext(), 6)
+        // Three posters per row keeps the grid tidy and legible on TV (no crowding).
+        postersView.layoutManager = GridLayoutManager(requireContext(), 3)
         postersView.adapter = posterAdapter
 
         loadCategories()

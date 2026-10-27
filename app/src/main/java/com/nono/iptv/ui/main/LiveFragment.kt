@@ -77,16 +77,20 @@ class LiveFragment : Fragment(R.layout.fragment_live) {
     }
 
     private fun onChannelFocused(ch: ChannelEntity) {
-        (activity as? MainActivity)?.playStream(ch.streamUrl)
+        val main = activity as? MainActivity
+        main?.playStream(ch.streamUrl)
+        main?.setLiveContext(ch, null, null)
         programTitle.text = ch.name
         programTime.text = ""
         val pl = playlist ?: return
         lifecycleScope.launch {
             val now = repo.nowProgram(ch) ?: repo.programsForChannel(pl, ch).let { repo.nowProgram(ch) }
             if (now != null) {
+                val range = "${timeFmt.format(Date(now.startMs))} – ${timeFmt.format(Date(now.stopMs))}"
                 programTitle.text = now.title
-                programTime.text = "${timeFmt.format(Date(now.startMs))} – ${timeFmt.format(Date(now.stopMs))}"
+                programTime.text = range
                 channelAdapter.setProgram(ch.id, now)
+                main?.setLiveContext(ch, now.title, range)
             }
         }
     }

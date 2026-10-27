@@ -90,6 +90,131 @@
             app:surface_type="surface_view" />
     </FrameLayout>
 
+    <!-- Full-screen player overlay: top channel/EPG info bar + bottom control bar.
+         Shown only in full-screen; toggled with the D-pad, auto-hides after a few seconds. -->
+    <FrameLayout
+        android:id="@+id/player_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <!-- Top: zap / now-next info bar -->
+        <LinearLayout
+            android:id="@+id/overlay_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="#B3000000"
+            android:paddingHorizontal="28dp"
+            android:paddingVertical="16dp">
+
+            <TextView
+                android:id="@+id/info_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="44dp"
+                android:textColor="@color/text_primary"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <ImageView
+                android:id="@+id/info_logo"
+                android:layout_width="64dp"
+                android:layout_height="44dp"
+                android:layout_marginHorizontal="16dp"
+                android:scaleType="fitCenter" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/info_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/info_now"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Bottom: control bar -->
+        <LinearLayout
+            android:id="@+id/overlay_controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/preview_scrim"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="40dp"
+            android:paddingBottom="22dp">
+
+            <LinearLayout android:id="@+id/ctrl_res" style="@style/PlayerCtrl" android:focusable="false" android:clickable="false">
+                <ImageView android:layout_width="26dp" android:layout_height="26dp" android:src="@drawable/ic_tv" android:tint="@color/text_primary" />
+                <TextView android:id="@+id/ctrl_res_label" style="@style/PlayerCtrlLabel" android:text="—" />
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/ctrl_audio" style="@style/PlayerCtrl">
+                <ImageView android:layout_width="26dp" android:layout_height="26dp" android:src="@drawable/ic_audio" android:tint="@color/text_primary" />
+                <TextView android:id="@+id/ctrl_audio_label" style="@style/PlayerCtrlLabel" android:text="Audio" />
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/ctrl_sync" style="@style/PlayerCtrl">
+                <ImageView android:layout_width="26dp" android:layout_height="26dp" android:src="@drawable/ic_audio_sync" android:tint="@color/text_primary" />
+                <TextView android:id="@+id/ctrl_sync_label" style="@style/PlayerCtrlLabel" android:text="0 ms" />
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/ctrl_sub" style="@style/PlayerCtrl">
+                <ImageView android:layout_width="26dp" android:layout_height="26dp" android:src="@drawable/ic_subtitles" android:tint="@color/text_primary" />
+                <TextView android:id="@+id/ctrl_sub_label" style="@style/PlayerCtrlLabel" android:text="Sous-titres" />
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/ctrl_format" style="@style/PlayerCtrl">
+                <ImageView android:layout_width="26dp" android:layout_height="26dp" android:src="@drawable/ic_aspect" android:tint="@color/text_primary" />
+                <TextView android:id="@+id/ctrl_format_label" style="@style/PlayerCtrlLabel" android:text="Normal" />
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/ctrl_sleep" style="@style/PlayerCtrl">
+                <ImageView android:layout_width="26dp" android:layout_height="26dp" android:src="@drawable/ic_sleep" android:tint="@color/text_primary" />
+                <TextView android:id="@+id/ctrl_sleep_label" style="@style/PlayerCtrlLabel" android:text="Veille" />
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/ctrl_fav" style="@style/PlayerCtrl">
+                <ImageView android:layout_width="26dp" android:layout_height="26dp" android:src="@drawable/ic_star" android:tint="@color/accent_pink" />
+                <TextView android:id="@+id/ctrl_fav_label" style="@style/PlayerCtrlLabel" android:text="Favori" />
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/ctrl_options" style="@style/PlayerCtrl">
+                <ImageView android:layout_width="26dp" android:layout_height="26dp" android:src="@drawable/ic_list" android:tint="@color/text_primary" />
+                <TextView style="@style/PlayerCtrlLabel" android:text="Options" />
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/ctrl_settings" style="@style/PlayerCtrl">
+                <ImageView android:layout_width="26dp" android:layout_height="26dp" android:src="@drawable/ic_settings" android:tint="@color/text_primary" />
+                <TextView style="@style/PlayerCtrlLabel" android:text="Paramètres" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
     <!-- Settings side-sheet overlay -->
     <FrameLayout
         android:id="@+id/settings_container"

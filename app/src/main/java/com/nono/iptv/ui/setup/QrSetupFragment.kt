@@ -98,18 +98,35 @@ class QrSetupFragment : Fragment(R.layout.fragment_qr_setup) {
         }
     }
 
+    /**
+     * The TV's real LAN address. We must NOT return the Wi-Fi Direct / hotspot interface
+     * (p2p0 → 192.168.49.x), which the phone on the home Wi-Fi can't reach — that was the bug
+     * behind the blank page. Prefer wlan*, then eth*, then any other usable site-local address.
+     */
     private fun localIpAddress(): String? {
         return try {
+            val candidates = ArrayList<Pair<String, String>>()
             for (ni in NetworkInterface.getNetworkInterfaces()) {
-                if (!ni.isUp || ni.isLoopback) continue
+                if (!ni.isUp || ni.isLoopback || ni.isVirtual) continue
+                val name = (ni.name ?: "").lowercase()
+                if (name.startsWith("p2p") || name.startsWith("dummy") ||
+                    name.startsWith("rmnet") || name.startsWith("tun") ||
+                    name.startsWith("docker")
+                ) continue
                 for (addr in ni.inetAddresses) {
                     if (!addr.isLoopbackAddress && addr is Inet4Address && addr.isSiteLocalAddress) {
-                        return addr.hostAddress
+                        val ip = addr.hostAddress ?: continue
+                        if (ip.startsWith("192.168.49.")) continue // Wi-Fi Direct group owner
+                        candidates.add(name to ip)
                     }
                 }
             }
-            null
+            DebugLog.d("QR", "ip candidates: " + candidates.joinToString { "${it.first}=${it.second}" })
+            candidates.firstOrNull { it.first.startsWith("wlan") }?.second
+                ?: candidates.firstOrNull { it.first.startsWith("eth") }?.second
+                ?: candidates.firstOrNull()?.second
         } catch (t: Throwable) {
+            DebugLog.e("QR", "ip detection failed", t)
             null
         }
     }
