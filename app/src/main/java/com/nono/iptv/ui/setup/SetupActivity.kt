@@ -2,21 +2,30 @@ package com.nono.iptv.ui.setup
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.leanback.app.GuidedStepSupportFragment
 import com.nono.iptv.ui.main.MainActivity
 
 /**
- * Hosts the first-launch setup wizard: choose a playlist type, then enter Xtream credentials
- * or an M3U URL. On success it opens [MainActivity].
+ * Hosts the first-launch setup flow with plain fragments (no GuidedStep): a type picker, then an
+ * Xtream or M3U form built from real EditText fields. On success it opens [MainActivity].
  */
 class SetupActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
-            GuidedStepSupportFragment.addAsRoot(this, PlaylistTypeStepFragment(), android.R.id.content)
+            supportFragmentManager.beginTransaction()
+                .replace(android.R.id.content, PlaylistTypeFragment())
+                .commit()
         }
+    }
+
+    fun showFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(android.R.id.content, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     fun finishToMain() {

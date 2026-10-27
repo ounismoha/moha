@@ -1,10 +1,9 @@
 package com.nono.iptv.ui.main
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +13,7 @@ import com.nono.iptv.NonoApp
 import com.nono.iptv.data.IptvRepository
 import com.nono.iptv.data.entity.ChannelEntity
 import com.nono.iptv.data.entity.PlaylistEntity
+import com.nono.iptv.dvr.RecordingManager
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -41,7 +41,8 @@ class LiveFragment : Fragment(R.layout.fragment_live) {
         categoryAdapter = CategoryAdapter { cat -> loadChannels(cat.remoteId) }
         channelAdapter = ChannelAdapter(
             onFocused = { ch -> onChannelFocused(ch) },
-            onClicked = { (activity as? MainActivity)?.enterFullscreen() }
+            onClicked = { (activity as? MainActivity)?.enterFullscreen() },
+            onLongClicked = { ch -> startRecording(ch) }
         )
 
         categoriesView.layoutManager = LinearLayoutManager(requireContext())
@@ -88,5 +89,11 @@ class LiveFragment : Fragment(R.layout.fragment_live) {
                 channelAdapter.setProgram(ch.id, now)
             }
         }
+    }
+
+    /** Long-press on a channel starts a recording of it (DVR). */
+    private fun startRecording(ch: ChannelEntity) {
+        Toast.makeText(requireContext(), "Enregistrement : ${ch.name}", Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch { RecordingManager.start(requireContext(), ch) }
     }
 }

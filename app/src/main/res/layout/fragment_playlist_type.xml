@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:padding="48dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@color/accent_pink"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Type de liste de lecture"
+            android:textColor="@color/text_primary"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choisissez comment ajouter vos chaînes."
+            android:textColor="@color/text_secondary"
+            android:textSize="15sp"
+            android:layout_marginBottom="24dp" />
+
+        <Button android:id="@+id/btn_xtream" android:layout_width="380dp" android:layout_height="wrap_content" android:text="Xtream Codes" android:layout_marginBottom="12dp" />
+        <Button android:id="@+id/btn_m3u" android:layout_width="380dp" android:layout_height="wrap_content" android:text="M3U / URL" android:layout_marginBottom="12dp" />
+        <Button android:id="@+id/btn_debug" android:layout_width="380dp" android:layout_height="wrap_content" android:text="Débogage" />
+    </LinearLayout>
+</ScrollView>

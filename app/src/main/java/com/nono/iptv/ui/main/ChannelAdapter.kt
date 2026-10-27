@@ -18,7 +18,8 @@ import com.nono.iptv.data.entity.ProgramEntity
  */
 class ChannelAdapter(
     private val onFocused: (ChannelEntity) -> Unit,
-    private val onClicked: (ChannelEntity) -> Unit
+    private val onClicked: (ChannelEntity) -> Unit,
+    private val onLongClicked: (ChannelEntity) -> Unit = {}
 ) : RecyclerView.Adapter<ChannelAdapter.VH>() {
 
     private val items = mutableListOf<ChannelEntity>()
@@ -71,6 +72,7 @@ class ChannelAdapter(
 
         holder.itemView.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) onFocused(ch) }
         holder.itemView.setOnClickListener { onClicked(ch) }
+        holder.itemView.setOnLongClickListener { onLongClicked(ch); true }
     }
 
     class VH(v: View) : RecyclerView.ViewHolder(v) {

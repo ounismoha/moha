@@ -73,15 +73,18 @@ class MainActivity : FragmentActivity() {
             R.id.nav_tv to { select(R.id.nav_tv, LiveFragment()) },
             R.id.nav_films to { select(R.id.nav_films, CatalogFragment.of(VodKind.MOVIE)) },
             R.id.nav_series to { select(R.id.nav_series, CatalogFragment.of(VodKind.SERIES)) },
-            R.id.nav_dvr to { select(R.id.nav_dvr, PlaceholderFragment.of("Enregistrements — bientôt disponible")) },
-            R.id.nav_list to { select(R.id.nav_list, PlaceholderFragment.of("Ma liste — bientôt disponible")) }
+            R.id.nav_guide to { select(R.id.nav_guide, GuideFragment()) },
+            R.id.nav_dvr to { select(R.id.nav_dvr, DvrFragment()) },
+            R.id.nav_list to { select(R.id.nav_list, PlaceholderFragment.of("Ma liste — bientôt disponible")) },
+            R.id.nav_multiview to { select(R.id.nav_multiview, MultiViewFragment()) }
         )
         map.forEach { (id, action) -> findViewById<View>(id).setOnClickListener { action() } }
         findViewById<View>(R.id.nav_settings).setOnClickListener { openSettings() }
     }
 
     private val navIds = intArrayOf(
-        R.id.nav_search, R.id.nav_tv, R.id.nav_films, R.id.nav_series, R.id.nav_dvr, R.id.nav_list
+        R.id.nav_search, R.id.nav_tv, R.id.nav_films, R.id.nav_series, R.id.nav_guide,
+        R.id.nav_dvr, R.id.nav_list, R.id.nav_multiview
     )
 
     private fun select(navId: Int, fragment: Fragment) {

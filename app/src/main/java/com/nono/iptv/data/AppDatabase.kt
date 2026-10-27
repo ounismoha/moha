@@ -8,11 +8,13 @@ import com.nono.iptv.data.dao.CategoryDao
 import com.nono.iptv.data.dao.ChannelDao
 import com.nono.iptv.data.dao.PlaylistDao
 import com.nono.iptv.data.dao.ProgramDao
+import com.nono.iptv.data.dao.RecordingDao
 import com.nono.iptv.data.dao.VodDao
 import com.nono.iptv.data.entity.CategoryEntity
 import com.nono.iptv.data.entity.ChannelEntity
 import com.nono.iptv.data.entity.PlaylistEntity
 import com.nono.iptv.data.entity.ProgramEntity
+import com.nono.iptv.data.entity.RecordingEntity
 import com.nono.iptv.data.entity.VodEntity
 
 @Database(
@@ -21,9 +23,10 @@ import com.nono.iptv.data.entity.VodEntity
         CategoryEntity::class,
         ChannelEntity::class,
         VodEntity::class,
-        ProgramEntity::class
+        ProgramEntity::class,
+        RecordingEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -33,6 +36,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun channelDao(): ChannelDao
     abstract fun vodDao(): VodDao
     abstract fun programDao(): ProgramDao
+    abstract fun recordingDao(): RecordingDao
 
     companion object {
         @Volatile

@@ -92,8 +92,11 @@ class XtreamClient(
         val userInfo = root.optJSONObject("user_info")
         val auth = userInfo?.optInt("auth", 0) ?: 0
         val status = userInfo?.optString("status", "").orEmpty()
-        DebugLog.d("Xtream", "auth=$auth status='$status'")
-        userInfo != null && auth == 1 && (status.isEmpty() || status.equals("Active", true))
+        val exp = userInfo?.optString("exp_date", "").orEmpty()
+        DebugLog.d("Xtream", "auth=$auth status='$status' exp=$exp")
+        // Accept any account the panel authenticates (auth=1), like most IPTV players do;
+        // the status is logged for diagnostics but not used to reject.
+        userInfo != null && auth == 1
     }
 
     // ---- live ----------------------------------------------------------------

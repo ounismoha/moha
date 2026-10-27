@@ -44,8 +44,10 @@
             <TextView android:id="@+id/nav_tv" style="@style/NavItem" android:text="@string/nav_tv" app:drawableStartCompat="@drawable/ic_tv" />
             <TextView android:id="@+id/nav_films" style="@style/NavItem" android:text="@string/nav_films" app:drawableStartCompat="@drawable/ic_films" />
             <TextView android:id="@+id/nav_series" style="@style/NavItem" android:text="@string/nav_series" app:drawableStartCompat="@drawable/ic_series" />
+            <TextView android:id="@+id/nav_guide" style="@style/NavItem" android:text="@string/nav_guide" app:drawableStartCompat="@drawable/ic_guide" />
             <TextView android:id="@+id/nav_dvr" style="@style/NavItem" android:text="@string/nav_dvr" app:drawableStartCompat="@drawable/ic_dvr" />
             <TextView android:id="@+id/nav_list" style="@style/NavItem" android:text="@string/nav_list" app:drawableStartCompat="@drawable/ic_list" />
+            <TextView android:id="@+id/nav_multiview" style="@style/NavItem" android:text="@string/nav_multiview" app:drawableStartCompat="@drawable/ic_multiview" />
 
             <View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
 

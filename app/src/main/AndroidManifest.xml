@@ -4,6 +4,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!-- TV devices have no touchscreen; declare it optional so the app installs on TVs -->
     <uses-feature
@@ -46,7 +49,7 @@
             android:exported="false"
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@style/Theme.NonoApp.Setup" />
+            android:theme="@style/Theme.NonoApp" />
 
         <!-- Diagnostics screen -->
         <activity
@@ -55,6 +58,12 @@
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/Theme.NonoApp" />
+
+        <!-- DVR recording foreground service -->
+        <service
+            android:name=".dvr.RecordingService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
 
     </application>
 
