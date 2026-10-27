@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 class M3uUrlStepFragment : GuidedStepSupportFragment() {
 
     private var loading = false
+    private val values = mutableMapOf<Long, String>()
 
     override fun onCreateGuidance(savedInstanceState: Bundle?): Guidance = Guidance(
         "M3U / URL",
@@ -37,10 +38,23 @@ class M3uUrlStepFragment : GuidedStepSupportFragment() {
         )
     }
 
+    override fun onGuidedActionEditedAndProceed(action: GuidedAction): Long {
+        capture(action)
+        return GuidedAction.ACTION_ID_NEXT
+    }
+
+    override fun onGuidedActionEditCanceled(action: GuidedAction) = capture(action)
+
+    private fun capture(action: GuidedAction) {
+        values[action.id] = (action.editTitle ?: action.title)?.toString()?.trim().orEmpty()
+    }
+
     override fun onGuidedActionClicked(action: GuidedAction) {
         if (action.id != ID_ADD || loading) return
-        val name = findActionById(ID_NAME)?.title?.toString()?.trim().orEmpty()
-        val url = findActionById(ID_URL)?.title?.toString()?.trim().orEmpty()
+        listOf(ID_NAME, ID_URL).forEach { id -> findActionById(id)?.let { capture(it) } }
+
+        val name = values[ID_NAME].orEmpty()
+        val url = values[ID_URL].orEmpty()
         if (url.isBlank()) {
             Toast.makeText(requireContext(), "Veuillez entrer une URL.", Toast.LENGTH_SHORT).show()
             return
@@ -50,11 +64,8 @@ class M3uUrlStepFragment : GuidedStepSupportFragment() {
         lifecycleScope.launch {
             val result = NonoApp.repository().importM3u(name, url)
             loading = false
-            result.onSuccess {
-                (activity as? SetupActivity)?.finishToMain()
-            }.onFailure { e ->
-                Toast.makeText(requireContext(), e.message ?: "Échec du chargement", Toast.LENGTH_LONG).show()
-            }
+            result.onSuccess { (activity as? SetupActivity)?.finishToMain() }
+                .onFailure { e -> Toast.makeText(requireContext(), e.message ?: "Échec du chargement", Toast.LENGTH_LONG).show() }
         }
     }
 

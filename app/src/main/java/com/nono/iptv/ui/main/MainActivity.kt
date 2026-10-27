@@ -32,6 +32,7 @@ class MainActivity : FragmentActivity() {
 
     private lateinit var chrome: LinearLayout
     private lateinit var settingsContainer: FrameLayout
+    private lateinit var playerView: PlayerView
     private var fullscreen = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +54,12 @@ class MainActivity : FragmentActivity() {
         settingsContainer = findViewById(R.id.settings_container)
 
         playerEngine = PlayerEngine(this)
-        findViewById<PlayerView>(R.id.player_view).player = playerEngine.initialize()
+        playerView = findViewById(R.id.player_view)
+        playerView.player = playerEngine.initialize()
+        // Controls stay off during the mini-preview so the channel list keeps focus;
+        // they're switched on in full-screen (play/pause, seek for VOD, audio & subtitle tracks).
+        playerView.useController = false
+        playerView.setShowSubtitleButton(true)
 
         wireNav()
 
@@ -92,11 +98,17 @@ class MainActivity : FragmentActivity() {
     fun enterFullscreen() {
         fullscreen = true
         chrome.visibility = View.GONE
+        playerView.useController = true
+        playerView.requestFocus()
+        playerView.showController()
     }
 
     private fun exitFullscreen() {
         fullscreen = false
+        playerView.hideController()
+        playerView.useController = false
         chrome.visibility = View.VISIBLE
+        findViewById<View>(R.id.content_frame).requestFocus()
     }
 
     fun openSettings() {

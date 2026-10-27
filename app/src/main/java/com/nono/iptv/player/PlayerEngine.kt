@@ -7,16 +7,23 @@ import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 
 /**
- * Thin wrapper around a Media3 [ExoPlayer] configured for live IPTV streams:
- *  - OkHttp-backed HTTP data source with a configurable User-Agent (and redirect following),
- *  - a [DefaultLoadControl] tuned for low-latency live playback rather than VOD,
- *  - progressive/HLS handled automatically by [DefaultMediaSourceFactory].
+ * Media3 [ExoPlayer] wrapper tuned for IPTV, including 4K / HDR / Dolby:
+ *  - OkHttp HTTP data source with a configurable User-Agent (and redirect following),
+ *  - hardware decoders drive 4K, HDR and Dolby Vision (HEVC/VP9/AV1 profiles) on the TV,
+ *    with software decoder fallback for robustness,
+ *  - audio channel count is NOT constrained to device capabilities, so multichannel
+ *    Dolby Digital / Dolby Digital Plus (AC-3 / E-AC-3 / Atmos) can pass through to a
+ *    receiver or soundbar instead of being downmixed to stereo,
+ *  - no video resolution cap, so the best (up to 4K) track is selected,
+ *  - live-tuned buffering.
  */
 @UnstableApi
 class PlayerEngine(
@@ -34,30 +41,40 @@ class PlayerEngine(
     var player: ExoPlayer? = null
         private set
 
+    private var trackSelector: DefaultTrackSelector? = null
+
     fun initialize(): ExoPlayer {
         player?.let { return it }
 
-        val httpFactory = OkHttpDataSource.Factory(okHttpClient)
-            .setUserAgent(userAgent)
-
-        // Fall back to file/content/asset sources via DefaultDataSource, HTTP via OkHttp.
+        val httpFactory = OkHttpDataSource.Factory(okHttpClient).setUserAgent(userAgent)
         val dataSourceFactory = DataSource.Factory {
             DefaultDataSource.Factory(context, httpFactory).createDataSource()
         }
 
-        // Live-tuned buffering: keep latency low but survive brief network stalls.
-        val loadControl = DefaultLoadControl.Builder()
-            .setBufferDurationsMs(
-                /* minBufferMs = */ 15_000,
-                /* maxBufferMs = */ 50_000,
-                /* bufferForPlaybackMs = */ 2_500,
-                /* bufferForPlaybackAfterRebufferMs = */ 5_000
+        // Prefer hardware decoders (needed for 4K/HDR/Dolby Vision); fall back to software if needed.
+        val renderersFactory = DefaultRenderersFactory(context)
+            .setEnableDecoderFallback(true)
+            .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF)
+
+        // Allow best video (up to 4K) and let Dolby multichannel pass through un-downmixed.
+        val selector = DefaultTrackSelector(context).apply {
+            setParameters(
+                buildUponParameters()
+                    .setConstrainAudioChannelCountToDeviceCapabilities(false)
+                    .clearVideoSizeConstraints()
+                    .build()
             )
+        }
+        trackSelector = selector
+
+        val loadControl = DefaultLoadControl.Builder()
+            .setBufferDurationsMs(15_000, 50_000, 2_500, 5_000)
             .setPrioritizeTimeOverSizeThresholds(true)
             .build()
 
-        return ExoPlayer.Builder(context)
+        return ExoPlayer.Builder(context, renderersFactory)
             .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
+            .setTrackSelector(selector)
             .setLoadControl(loadControl)
             .build()
             .also {
@@ -74,12 +91,11 @@ class PlayerEngine(
         p.playWhenReady = true
     }
 
-    fun stop() {
-        player?.stop()
-    }
+    fun stop() { player?.stop() }
 
     fun release() {
         player?.release()
         player = null
+        trackSelector = null
     }
 }

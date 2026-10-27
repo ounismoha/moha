@@ -14,6 +14,8 @@ import kotlinx.coroutines.launch
 class XtreamStepFragment : GuidedStepSupportFragment() {
 
     private var connecting = false
+    // Values captured the moment each text field's edit is confirmed — reliable on TV keyboards.
+    private val values = mutableMapOf<Long, String>()
 
     override fun onCreateGuidance(savedInstanceState: Bundle?): Guidance = Guidance(
         "Xtream Codes",
@@ -25,61 +27,59 @@ class XtreamStepFragment : GuidedStepSupportFragment() {
     override fun onCreateActions(actions: MutableList<GuidedAction>, savedInstanceState: Bundle?) {
         actions.add(
             GuidedAction.Builder(requireContext())
-                .id(ID_SERVER)
-                .title("")
-                .description("Adresse du serveur (http://host:port)")
-                .editable(true)
-                .editInputType(InputType.TYPE_TEXT_VARIATION_URI)
-                .build()
+                .id(ID_SERVER).title("").description("Adresse du serveur (http://host:port)")
+                .editable(true).editInputType(InputType.TYPE_TEXT_VARIATION_URI).build()
         )
         actions.add(
             GuidedAction.Builder(requireContext())
-                .id(ID_USER)
-                .title("")
-                .description("Nom d'utilisateur")
-                .editable(true)
-                .build()
+                .id(ID_USER).title("").description("Nom d'utilisateur").editable(true).build()
         )
         actions.add(
             GuidedAction.Builder(requireContext())
-                .id(ID_PASS)
-                .title("")
-                .description("Mot de passe")
+                .id(ID_PASS).title("").description("Mot de passe")
                 .editable(true)
                 .editInputType(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD)
                 .build()
         )
         actions.add(
             GuidedAction.Builder(requireContext())
-                .id(ID_LIVE)
-                .title("Inclure les chaînes de télévision")
-                .checkSetId(GuidedAction.CHECKBOX_CHECK_SET_ID)
-                .checked(true)
-                .build()
+                .id(ID_LIVE).title("Inclure les chaînes de télévision")
+                .checkSetId(GuidedAction.CHECKBOX_CHECK_SET_ID).checked(true).build()
         )
         actions.add(
             GuidedAction.Builder(requireContext())
-                .id(ID_VOD)
-                .title("Inclure la VOD (Films & Séries)")
-                .checkSetId(GuidedAction.CHECKBOX_CHECK_SET_ID)
-                .checked(true)
-                .build()
+                .id(ID_VOD).title("Inclure la VOD (Films & Séries)")
+                .checkSetId(GuidedAction.CHECKBOX_CHECK_SET_ID).checked(true).build()
         )
         actions.add(
-            GuidedAction.Builder(requireContext())
-                .id(ID_CONNECT)
-                .title("Se connecter")
-                .hasNext(true)
-                .build()
+            GuidedAction.Builder(requireContext()).id(ID_CONNECT).title("Se connecter").hasNext(true).build()
         )
+    }
+
+    /** Called when a text field's edit is confirmed — capture the value immediately. */
+    override fun onGuidedActionEditedAndProceed(action: GuidedAction): Long {
+        capture(action)
+        return GuidedAction.ACTION_ID_NEXT
+    }
+
+    override fun onGuidedActionEditCanceled(action: GuidedAction) {
+        capture(action)
+    }
+
+    private fun capture(action: GuidedAction) {
+        val v = (action.editTitle ?: action.title)?.toString()?.trim().orEmpty()
+        values[action.id] = v
     }
 
     override fun onGuidedActionClicked(action: GuidedAction) {
         if (action.id != ID_CONNECT || connecting) return
 
-        val server = text(ID_SERVER)
-        val user = text(ID_USER)
-        val pass = text(ID_PASS)
+        // Capture anything still showing in the fields (in case an edit wasn't "proceeded").
+        listOf(ID_SERVER, ID_USER, ID_PASS).forEach { id -> findActionById(id)?.let { capture(it) } }
+
+        val server = values[ID_SERVER].orEmpty()
+        val user = values[ID_USER].orEmpty()
+        val pass = values[ID_PASS].orEmpty()
         val includeLive = findActionById(ID_LIVE)?.isChecked ?: true
         val includeVod = findActionById(ID_VOD)?.isChecked ?: true
 
@@ -99,17 +99,11 @@ class XtreamStepFragment : GuidedStepSupportFragment() {
             result.onSuccess {
                 toast("Connecté ✓")
                 (activity as? SetupActivity)?.finishToMain()
-            }.onFailure { e ->
-                toast(e.message ?: "Échec de la connexion")
-            }
+            }.onFailure { e -> toast(e.message ?: "Échec de la connexion") }
         }
     }
 
-    private fun text(id: Long): String = findActionById(id)?.title?.toString()?.trim().orEmpty()
-
-    private fun toast(msg: String) {
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-    }
+    private fun toast(msg: String) = Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
 
     companion object {
         private const val ID_SERVER = 10L
