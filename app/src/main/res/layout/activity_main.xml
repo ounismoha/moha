@@ -5,15 +5,6 @@
     android:layout_height="match_parent"
     android:background="@color/bg">
 
-    <!-- Full-screen player at the back; chrome is drawn on top and hidden when full-screen. -->
-    <androidx.media3.ui.PlayerView
-        android:id="@+id/player_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:use_controller="false"
-        app:resize_mode="fit"
-        app:surface_type="surface_view" />
-
     <!-- 3-pane chrome: nav rail (col 1) + content frame (cols 2 & 3 live inside fragments) -->
     <LinearLayout
         android:id="@+id/chrome"
@@ -78,6 +69,26 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
     </LinearLayout>
+
+    <!-- Player host: a windowed 16:9 mini-preview (top-right) in 3-pane mode; expands to
+         match_parent on full-screen. Drawn above the chrome so it overlays the right column. -->
+    <FrameLayout
+        android:id="@+id/player_host"
+        android:layout_width="400dp"
+        android:layout_height="225dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="18dp"
+        android:background="#000000">
+
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/player_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:use_controller="false"
+            app:resize_mode="fit"
+            app:surface_type="surface_view" />
+    </FrameLayout>
 
     <!-- Settings side-sheet overlay -->
     <FrameLayout

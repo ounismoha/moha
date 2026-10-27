@@ -33,6 +33,9 @@ class MainActivity : FragmentActivity() {
     private lateinit var chrome: LinearLayout
     private lateinit var settingsContainer: FrameLayout
     private lateinit var playerView: PlayerView
+    private lateinit var playerHost: FrameLayout
+    private var windowedParams: FrameLayout.LayoutParams? = null
+    private var previewEnabled = false
     private var fullscreen = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +58,9 @@ class MainActivity : FragmentActivity() {
 
         playerEngine = PlayerEngine(this)
         playerView = findViewById(R.id.player_view)
+        playerHost = findViewById(R.id.player_host)
+        // Remember the XML windowed geometry (top-right 16:9) so we can restore it after full-screen.
+        windowedParams = FrameLayout.LayoutParams(playerHost.layoutParams as FrameLayout.LayoutParams)
         playerView.player = playerEngine.initialize()
         // Controls stay off during the mini-preview so the channel list keeps focus;
         // they're switched on in full-screen (play/pause, seek for VOD, audio & subtitle tracks).
@@ -89,17 +95,40 @@ class MainActivity : FragmentActivity() {
 
     private fun select(navId: Int, fragment: Fragment) {
         navIds.forEach { findViewById<View>(it).isSelected = it == navId }
+        // The windowed preview only belongs on the Live screen; other sections stop it.
+        previewEnabled = fragment is LiveFragment
+        if (::playerHost.isInitialized && !fullscreen) {
+            applyWindowedPreview()
+            if (!previewEnabled && ::playerEngine.isInitialized) playerEngine.stop()
+        }
         supportFragmentManager.beginTransaction()
             .replace(R.id.content_frame, fragment)
             .commit()
     }
 
+    /** Restore the top-right 16:9 window and show it only when a Live preview is wanted. */
+    private fun applyWindowedPreview() {
+        windowedParams?.let { playerHost.layoutParams = FrameLayout.LayoutParams(it) }
+        playerHost.visibility = if (previewEnabled) View.VISIBLE else View.GONE
+    }
+
     // ---- API used by the content fragments -----------------------------------
 
-    fun playStream(url: String) = playerEngine.play(url)
+    fun playStream(url: String) {
+        // A focused channel (or a played movie) needs the surface visible to render.
+        if (::playerHost.isInitialized && playerHost.visibility != View.VISIBLE) {
+            playerHost.visibility = View.VISIBLE
+        }
+        playerEngine.play(url)
+    }
 
     fun enterFullscreen() {
         fullscreen = true
+        playerHost.layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT
+        )
+        playerHost.visibility = View.VISIBLE
+        playerHost.bringToFront()
         chrome.visibility = View.GONE
         playerView.useController = true
         playerView.requestFocus()
@@ -110,6 +139,7 @@ class MainActivity : FragmentActivity() {
         fullscreen = false
         playerView.hideController()
         playerView.useController = false
+        applyWindowedPreview()
         chrome.visibility = View.VISIBLE
         findViewById<View>(R.id.content_frame).requestFocus()
     }
@@ -124,6 +154,8 @@ class MainActivity : FragmentActivity() {
     fun openDebug() {
         if (settingsContainer.visibility == View.VISIBLE) closeSettings()
         navIds.forEach { findViewById<View>(it).isSelected = false }
+        previewEnabled = false
+        if (::playerHost.isInitialized && !fullscreen) applyWindowedPreview()
         supportFragmentManager.beginTransaction()
             .replace(R.id.content_frame, com.nono.iptv.ui.settings.DebugFragment())
             .commit()

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <!-- Column 2: categories -->
+    <!-- Column 2: categories (focus drives the channel list in column 3) -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/live_categories"
         android:layout_width="290dp"
@@ -14,46 +14,55 @@
         android:paddingVertical="16dp"
         android:clipToPadding="false" />
 
-    <!-- Column 3: top = preview (player shows through) + program info; bottom = channel list -->
+    <!-- Column 3: reserved space for the floating 16:9 preview (top-right) + program info,
+         then the vertical channel list fills the remaining height. -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <LinearLayout
+        <!-- Reserves the top band where the windowed player overlays this pane.
+             Program title/time sit at the bottom-left of the band, beside the preview. -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="bottom"
-            android:paddingHorizontal="20dp"
-            android:paddingBottom="12dp"
-            android:background="@drawable/preview_scrim">
+            android:layout_height="250dp">
 
-            <TextView
-                android:id="@+id/tv_program_title"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/text_primary"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:maxLines="1"
-                android:ellipsize="end" />
+                android:layout_gravity="bottom"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingBottom="10dp"
+                android:paddingEnd="432dp">
 
-            <TextView
-                android:id="@+id/tv_program_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_program_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:maxLines="2"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/tv_program_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </FrameLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/live_channels"
             android:layout_width="match_parent"
-            android:layout_height="330dp"
-            android:background="#F00A0F18"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/pane_content"
             android:paddingHorizontal="12dp"
             android:paddingVertical="10dp"
             android:clipToPadding="false" />
