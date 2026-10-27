@@ -48,6 +48,14 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/Theme.NonoApp.Setup" />
 
+        <!-- Diagnostics screen -->
+        <activity
+            android:name=".ui.settings.DebugActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/Theme.NonoApp" />
+
     </application>
 
 </manifest>

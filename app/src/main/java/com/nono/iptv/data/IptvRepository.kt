@@ -228,6 +228,22 @@ class IptvRepository(context: Context) {
         }
     }
 
+    /** Episodes of a series as (label, playableUrl) pairs, fetched from the Xtream panel. */
+    suspend fun seriesEpisodes(playlist: PlaylistEntity, series: VodEntity): List<Pair<String, String>> =
+        withContext(Dispatchers.IO) {
+            if (playlist.type != PlaylistType.XTREAM) return@withContext emptyList()
+            try {
+                val client = XtreamClient(playlist.serverUrl, playlist.username, playlist.password)
+                client.seriesInfo(series.remoteId).map { ep ->
+                    "S%02dE%02d — %s".format(ep.season, ep.episode, ep.title) to
+                        client.seriesEpisodeUrl(ep.id, ep.ext)
+                }
+            } catch (t: Throwable) {
+                DebugLog.e("Series", "episodes failed", t)
+                emptyList()
+            }
+        }
+
     // ---- EPG -----------------------------------------------------------------
 
     private fun epgIdOf(channel: ChannelEntity): String =

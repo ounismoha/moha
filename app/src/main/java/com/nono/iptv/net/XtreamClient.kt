@@ -1,5 +1,6 @@
 package com.nono.iptv.net
 
+import com.nono.iptv.util.DebugLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -74,10 +75,25 @@ class XtreamClient(
 
     /** Returns true when the panel authenticates the credentials (user_info.auth == 1). */
     suspend fun authenticate(): Boolean = withContext(Dispatchers.IO) {
-        val root = getJson(apiUrl(null))
+        val url = apiUrl(null)
+        DebugLog.d("Xtream", "GET $url")
+        val body = try {
+            getBody(url)
+        } catch (t: Throwable) {
+            DebugLog.e("Xtream", "auth request failed: ${t.message}", t)
+            return@withContext false
+        }
+        val trimmed = body.trim()
+        if (!trimmed.startsWith("{")) {
+            DebugLog.e("Xtream", "auth: non-JSON response (len=${body.length}): ${trimmed.take(200)}")
+            return@withContext false
+        }
+        val root = JSONObject(trimmed)
         val userInfo = root.optJSONObject("user_info")
-        userInfo != null && userInfo.optInt("auth", 0) == 1 &&
-            userInfo.optString("status", "").let { it.isEmpty() || it.equals("Active", true) }
+        val auth = userInfo?.optInt("auth", 0) ?: 0
+        val status = userInfo?.optString("status", "").orEmpty()
+        DebugLog.d("Xtream", "auth=$auth status='$status'")
+        userInfo != null && auth == 1 && (status.isEmpty() || status.equals("Active", true))
     }
 
     // ---- live ----------------------------------------------------------------
@@ -173,6 +189,37 @@ class XtreamClient(
     private fun decodeB64(s: String): String = try {
         if (s.isBlank()) "" else String(android.util.Base64.decode(s, android.util.Base64.DEFAULT), Charsets.UTF_8)
     } catch (e: Exception) { s }
+
+    // ---- series episodes -----------------------------------------------------
+
+    data class RemoteEpisode(val season: Int, val episode: Int, val title: String, val id: String, val ext: String)
+
+    /** Seasons/episodes for a series via get_series_info. */
+    suspend fun seriesInfo(seriesId: String): List<RemoteEpisode> = withContext(Dispatchers.IO) {
+        val root = getJson("${apiUrl("get_series_info")}&series_id=$seriesId")
+        val episodesObj = root.optJSONObject("episodes") ?: return@withContext emptyList()
+        val out = ArrayList<RemoteEpisode>()
+        episodesObj.keys().forEach { seasonKey ->
+            val arr = episodesObj.optJSONArray(seasonKey) ?: return@forEach
+            val seasonNum = seasonKey.toIntOrNull() ?: 0
+            for (i in 0 until arr.length()) {
+                val o = arr.getJSONObject(i)
+                val epNum = o.optInt("episode_num", i + 1)
+                val title = o.optString("title").ifBlank { "Épisode $epNum" }
+                out.add(
+                    RemoteEpisode(
+                        season = seasonNum,
+                        episode = epNum,
+                        title = title,
+                        id = o.optString("id"),
+                        ext = o.optString("container_extension").ifBlank { "mp4" }
+                    )
+                )
+            }
+        }
+        out.sortWith(compareBy({ it.season }, { it.episode }))
+        out
+    }
 
     // ---- url builders --------------------------------------------------------
 

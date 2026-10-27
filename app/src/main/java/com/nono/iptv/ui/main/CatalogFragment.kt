@@ -1,5 +1,6 @@
 package com.nono.iptv.ui.main
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -95,9 +96,28 @@ class CatalogFragment : Fragment(R.layout.fragment_catalog) {
                 playStream(url)
                 enterFullscreen()
             }
-        } else {
-            // Series episode selection (seasons/episodes) is the next milestone.
-            Toast.makeText(requireContext(), "Séries : sélection d'épisode à venir", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Series: fetch seasons/episodes, then let the user pick one to play.
+        val pl = playlist ?: return
+        Toast.makeText(requireContext(), "Chargement des épisodes…", Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            val episodes = repo.seriesEpisodes(pl, item)
+            if (episodes.isEmpty()) {
+                Toast.makeText(requireContext(), "Aucun épisode trouvé", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+            val titles = episodes.map { it.first }.toTypedArray()
+            AlertDialog.Builder(requireContext())
+                .setTitle(item.name)
+                .setItems(titles) { _, which ->
+                    (activity as? MainActivity)?.apply {
+                        playStream(episodes[which].second)
+                        enterFullscreen()
+                    }
+                }
+                .show()
         }
     }
 

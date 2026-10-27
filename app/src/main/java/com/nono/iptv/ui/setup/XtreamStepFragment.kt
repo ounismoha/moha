@@ -27,6 +27,11 @@ class XtreamStepFragment : GuidedStepSupportFragment() {
     override fun onCreateActions(actions: MutableList<GuidedAction>, savedInstanceState: Bundle?) {
         actions.add(
             GuidedAction.Builder(requireContext())
+                .id(ID_NAME).title("").description("Nom de la playlist (facultatif)")
+                .editable(true).build()
+        )
+        actions.add(
+            GuidedAction.Builder(requireContext())
                 .id(ID_SERVER).title("").description("Adresse du serveur (http://host:port)")
                 .editable(true).editInputType(InputType.TYPE_TEXT_VARIATION_URI).build()
         )
@@ -75,8 +80,9 @@ class XtreamStepFragment : GuidedStepSupportFragment() {
         if (action.id != ID_CONNECT || connecting) return
 
         // Capture anything still showing in the fields (in case an edit wasn't "proceeded").
-        listOf(ID_SERVER, ID_USER, ID_PASS).forEach { id -> findActionById(id)?.let { capture(it) } }
+        listOf(ID_NAME, ID_SERVER, ID_USER, ID_PASS).forEach { id -> findActionById(id)?.let { capture(it) } }
 
+        val name = values[ID_NAME].orEmpty()
         val server = values[ID_SERVER].orEmpty()
         val user = values[ID_USER].orEmpty()
         val pass = values[ID_PASS].orEmpty()
@@ -92,7 +98,7 @@ class XtreamStepFragment : GuidedStepSupportFragment() {
         toast("Connexion…")
         lifecycleScope.launch {
             val result = NonoApp.repository().importXtream(
-                name = "", server = server, username = user, password = pass,
+                name = name, server = server, username = user, password = pass,
                 includeLive = includeLive, includeVod = includeVod
             )
             connecting = false
@@ -106,6 +112,7 @@ class XtreamStepFragment : GuidedStepSupportFragment() {
     private fun toast(msg: String) = Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
 
     companion object {
+        private const val ID_NAME = 9L
         private const val ID_SERVER = 10L
         private const val ID_USER = 11L
         private const val ID_PASS = 12L

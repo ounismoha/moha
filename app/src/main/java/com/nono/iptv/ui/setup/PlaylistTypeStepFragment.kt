@@ -1,9 +1,11 @@
 package com.nono.iptv.ui.setup
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.leanback.app.GuidedStepSupportFragment
 import androidx.leanback.widget.GuidanceStylist.Guidance
 import androidx.leanback.widget.GuidedAction
+import com.nono.iptv.ui.settings.DebugActivity
 
 /** Screen 1 of the wizard — "Type de liste de lecture": Xtream Codes or M3U / URL. */
 class PlaylistTypeStepFragment : GuidedStepSupportFragment() {
@@ -30,17 +32,26 @@ class PlaylistTypeStepFragment : GuidedStepSupportFragment() {
                 .description("Lien direct vers une playlist .m3u")
                 .build()
         )
+        actions.add(
+            GuidedAction.Builder(requireContext())
+                .id(ACTION_DEBUG)
+                .title("Débogage")
+                .description("Voir le journal des erreurs (diagnostic)")
+                .build()
+        )
     }
 
     override fun onGuidedActionClicked(action: GuidedAction) {
         when (action.id) {
             ACTION_XTREAM -> add(parentFragmentManager, XtreamStepFragment())
             ACTION_M3U -> add(parentFragmentManager, M3uUrlStepFragment())
+            ACTION_DEBUG -> startActivity(Intent(requireContext(), DebugActivity::class.java))
         }
     }
 
     companion object {
         private const val ACTION_XTREAM = 1L
         private const val ACTION_M3U = 2L
+        private const val ACTION_DEBUG = 3L
     }
 }
