@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nono.iptv.NonoApp
 import com.nono.iptv.R
+import com.nono.iptv.ui.main.MainActivity
 import com.nono.iptv.ui.setup.SetupActivity
 import kotlinx.coroutines.launch
 
@@ -41,6 +42,9 @@ class SettingsDrawerFragment : Fragment(R.layout.settings_drawer) {
                 SettingItem(getString(R.string.settings_remote)) { soon() },
                 SettingItem(getString(R.string.settings_parental)) { soon() },
                 SettingItem(getString(R.string.settings_advanced)) { soon() },
+                SettingItem(getString(R.string.settings_debug)) {
+                    (activity as? MainActivity)?.openDebug()
+                },
                 SettingItem(getString(R.string.settings_about)) {
                     Toast.makeText(requireContext(), "nono app 1.0", Toast.LENGTH_SHORT).show()
                 }

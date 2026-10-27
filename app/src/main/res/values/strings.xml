@@ -30,6 +30,7 @@
     <string name="settings_remote">Télécommande</string>
     <string name="settings_parental">Contrôle Parental</string>
     <string name="settings_advanced">Paramètres avancés</string>
+    <string name="settings_debug">Débogage</string>
     <string name="settings_about">À propos</string>
     <string name="add_playlist">Ajouter une liste de lecture</string>
 </resources>

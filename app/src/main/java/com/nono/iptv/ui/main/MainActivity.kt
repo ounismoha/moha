@@ -118,6 +118,14 @@ class MainActivity : FragmentActivity() {
             .commit()
     }
 
+    fun openDebug() {
+        if (settingsContainer.visibility == View.VISIBLE) closeSettings()
+        navIds.forEach { findViewById<View>(it).isSelected = false }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.content_frame, com.nono.iptv.ui.settings.DebugFragment())
+            .commit()
+    }
+
     private fun closeSettings() {
         settingsContainer.visibility = View.GONE
         supportFragmentManager.findFragmentById(R.id.settings_container)?.let {

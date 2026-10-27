@@ -11,6 +11,7 @@ import com.nono.iptv.data.entity.VodEntity
 import com.nono.iptv.data.entity.VodKind
 import com.nono.iptv.net.XtreamClient
 import com.nono.iptv.parser.M3uParser
+import com.nono.iptv.util.DebugLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -90,7 +91,9 @@ class IptvRepository(context: Context) {
     ): Result<Long> = withContext(Dispatchers.IO) {
         try {
             val client = XtreamClient(server, username, password)
+            DebugLog.d("Import", "xtream auth → ${client.server} user=$username")
             if (!client.authenticate()) {
+                DebugLog.e("Import", "xtream auth failed for ${client.server}")
                 return@withContext Result.failure(IllegalStateException("Authentication failed — check server, username and password."))
             }
 
@@ -177,8 +180,10 @@ class IptvRepository(context: Context) {
             }
 
             categories.insertAll(catRows)
+            DebugLog.d("Import", "xtream ok: categories=${catRows.size}")
             Result.success(playlistId)
         } catch (t: Throwable) {
+            DebugLog.e("Import", "xtream import failed", t)
             Result.failure(t)
         }
     }
@@ -215,8 +220,10 @@ class IptvRepository(context: Context) {
                 )
             }
             channels.insertAllChunked(chRows)
+            DebugLog.d("Import", "m3u ok: channels=${chRows.size}")
             Result.success(playlistId)
         } catch (t: Throwable) {
+            DebugLog.e("Import", "m3u import failed", t)
             Result.failure(t)
         }
     }

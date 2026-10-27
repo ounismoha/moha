@@ -2,7 +2,10 @@ package com.nono.iptv.player
 
 import android.content.Context
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import com.nono.iptv.util.DebugLog
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
@@ -79,12 +82,18 @@ class PlayerEngine(
             .build()
             .also {
                 it.playWhenReady = true
+                it.addListener(object : Player.Listener {
+                    override fun onPlayerError(error: PlaybackException) {
+                        DebugLog.e("Player", "error ${error.errorCodeName}: ${error.message}", error)
+                    }
+                })
                 player = it
             }
     }
 
     /** Switch to a new stream URL, reusing the existing player instance. */
     fun play(streamUrl: String) {
+        DebugLog.d("Player", "play $streamUrl")
         val p = player ?: initialize()
         p.setMediaItem(MediaItem.fromUri(streamUrl))
         p.prepare()
