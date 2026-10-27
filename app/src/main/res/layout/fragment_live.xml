@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <!-- Column 2: categories -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/live_categories"
+        android:layout_width="290dp"
+        android:layout_height="match_parent"
+        android:background="#E6121A28"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="16dp"
+        android:clipToPadding="false" />
+
+    <!-- Column 3: top = preview (player shows through) + program info; bottom = channel list -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="bottom"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="12dp"
+            android:background="@drawable/preview_scrim">
+
+            <TextView
+                android:id="@+id/tv_program_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/tv_program_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/live_channels"
+            android:layout_width="match_parent"
+            android:layout_height="330dp"
+            android:background="#F00A0F18"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="10dp"
+            android:clipToPadding="false" />
+    </LinearLayout>
+</LinearLayout>

@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black">
+    android:background="@color/bg">
 
-    <!-- Full-screen video surface sits at the back -->
+    <!-- Full-screen player at the back; chrome is drawn on top and hidden when full-screen. -->
     <androidx.media3.ui.PlayerView
         android:id="@+id/player_view"
         android:layout_width="match_parent"
@@ -14,10 +14,56 @@
         app:resize_mode="fit"
         app:surface_type="surface_view" />
 
-    <!-- Leanback browse UI overlays the player -->
-    <FrameLayout
-        android:id="@+id/browse_container"
+    <!-- 3-pane chrome: nav rail (col 1) + content frame (cols 2 & 3 live inside fragments) -->
+    <LinearLayout
+        android:id="@+id/chrome"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/nav_rail"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/bg_rail"
+            android:paddingVertical="20dp"
+            android:paddingHorizontal="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textColor="@color/accent_pink"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="12dp"
+                android:paddingBottom="24dp" />
+
+            <TextView android:id="@+id/nav_search" style="@style/NavItem" android:text="@string/nav_search" app:drawableStartCompat="@drawable/ic_search" />
+            <TextView android:id="@+id/nav_tv" style="@style/NavItem" android:text="@string/nav_tv" app:drawableStartCompat="@drawable/ic_tv" />
+            <TextView android:id="@+id/nav_films" style="@style/NavItem" android:text="@string/nav_films" app:drawableStartCompat="@drawable/ic_films" />
+            <TextView android:id="@+id/nav_series" style="@style/NavItem" android:text="@string/nav_series" app:drawableStartCompat="@drawable/ic_series" />
+            <TextView android:id="@+id/nav_dvr" style="@style/NavItem" android:text="@string/nav_dvr" app:drawableStartCompat="@drawable/ic_dvr" />
+            <TextView android:id="@+id/nav_list" style="@style/NavItem" android:text="@string/nav_list" app:drawableStartCompat="@drawable/ic_list" />
+
+            <View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+
+            <TextView android:id="@+id/nav_settings" style="@style/NavItem" android:text="@string/nav_settings" app:drawableStartCompat="@drawable/ic_settings" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/content_frame"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <!-- Settings side-sheet overlay -->
+    <FrameLayout
+        android:id="@+id/settings_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </FrameLayout>

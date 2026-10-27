@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/row_item_bg"
+    android:focusable="true"
+    android:paddingHorizontal="14dp"
+    android:paddingVertical="10dp"
+    android:layout_marginBottom="2dp">
+
+    <TextView
+        android:id="@+id/epg_time"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/accent"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/epg_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/row_text"
+        android:textSize="14sp"
+        android:maxLines="1"
+        android:ellipsize="end" />
+</LinearLayout>

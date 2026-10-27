@@ -15,6 +15,7 @@
         android:required="false" />
 
     <application
+        android:name=".NonoApp"
         android:allowBackup="true"
         android:banner="@drawable/app_banner"
         android:icon="@drawable/app_icon"
@@ -23,20 +24,29 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.NonoApp">
 
+        <!-- Launcher entry: decides at runtime whether to show the setup wizard or the main UI -->
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.main.MainActivity"
             android:exported="true"
             android:screenOrientation="landscape"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:launchMode="singleTop">
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
+            android:launchMode="singleTop"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <!-- Appears on the Android TV home screen -->
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-                <!-- Also appears in a normal phone/tablet launcher -->
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Setup / Xtream wizard -->
+        <activity
+            android:name=".ui.setup.SetupActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/Theme.NonoApp.Setup" />
 
     </application>
 

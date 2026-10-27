@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/category_name"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/row_item_bg"
+    android:focusable="true"
+    android:clickable="true"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="13dp"
+    android:layout_marginBottom="2dp"
+    android:textColor="@color/row_text"
+    android:textSize="15sp"
+    android:maxLines="1"
+    android:ellipsize="end" />

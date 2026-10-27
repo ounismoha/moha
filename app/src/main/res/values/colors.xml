@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#0E1420</color>
+    <color name="bg_rail">#0A0F18</color>
+    <color name="bg_pane">#121A28</color>
+    <color name="bg_card">#1C2533</color>
+    <color name="bg_drawer">#E6101826</color>
+    <color name="accent">#4C8BF5</color>
+    <color name="accent_pink">#FF3D7F</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#9AA7BD</color>
+    <color name="focus_ring">#4C8BF5</color>
+    <color name="row_focus">#243047</color>
+</resources>

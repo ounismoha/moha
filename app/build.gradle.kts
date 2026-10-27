@@ -57,6 +57,10 @@ dependencies {
     // Android TV UI
     implementation("androidx.leanback:leanback:1.0.0")
 
+    // Layout + lists for the custom 3-pane UI
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+
     // Media3 / ExoPlayer
     implementation("androidx.media3:media3-exoplayer:$media3Version")
     implementation("androidx.media3:media3-exoplayer-hls:$media3Version")

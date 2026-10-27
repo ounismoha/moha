@@ -1,54 +1,48 @@
 package com.nono.iptv.parser
 
-import com.nono.iptv.data.ChannelEntity
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 
+/** A channel parsed from an M3U line, before it is mapped to a Room entity. */
+data class ParsedChannel(
+    val tvgId: String?,
+    val name: String,
+    val logoUrl: String?,
+    val group: String,
+    val streamUrl: String
+)
+
 /**
- * Streaming parser for extended M3U (#EXTM3U) playlists.
- *
- * Reads one line at a time through a [BufferedReader] so that playlists with tens of
- * thousands of channels never have to be held in memory as a single string. Each
- * `#EXTINF` line carries attributes (tvg-id, tvg-logo, group-title) and a display name;
- * the following non-comment line is the stream URL.
- *
- * Example entry:
- * ```
- * #EXTINF:-1 tvg-id="bbc1.uk" tvg-logo="http://logo/bbc1.png" group-title="UK",BBC One
- * http://server/stream/bbc1.m3u8
- * ```
+ * Streaming parser for extended M3U (#EXTM3U) playlists. Reads line-by-line through a
+ * [BufferedReader] so very large playlists aren't held in memory as one string.
  */
 object M3uParser {
 
     private val ATTR_REGEX = Regex("""([\w-]+)="([^"]*)"""")
+    const val DEFAULT_GROUP = "Ungrouped"
 
-    fun parse(stream: InputStream): List<ChannelEntity> {
-        val channels = ArrayList<ChannelEntity>()
+    fun parse(stream: InputStream): List<ParsedChannel> {
+        val channels = ArrayList<ParsedChannel>()
         BufferedReader(InputStreamReader(stream, Charsets.UTF_8)).use { reader ->
             var pending: Pending? = null
-            var autoNumber = 0
-
-            reader.forEachLine { rawLine ->
-                val line = rawLine.trim()
+            reader.forEachLine { raw ->
+                val line = raw.trim()
                 when {
                     line.isEmpty() -> Unit
                     line.startsWith("#EXTM3U") -> Unit
                     line.startsWith("#EXTINF") -> pending = parseExtInf(line)
-                    line.startsWith("#") -> Unit // other tags (#EXTGRP, #KODIPROP, …) ignored for now
+                    line.startsWith("#") -> Unit
                     else -> {
-                        // A URL line completes the most recent #EXTINF.
                         val info = pending
                         if (info != null) {
-                            autoNumber++
                             channels.add(
-                                ChannelEntity(
+                                ParsedChannel(
                                     tvgId = info.tvgId,
-                                    name = info.name.ifBlank { "Channel $autoNumber" },
-                                    logoUrl = info.logoUrl,
-                                    groupName = info.group.ifBlank { DEFAULT_GROUP },
-                                    streamUrl = line,
-                                    channelNumber = autoNumber
+                                    name = info.name.ifBlank { "Channel ${channels.size + 1}" },
+                                    logoUrl = info.logo,
+                                    group = info.group.ifBlank { DEFAULT_GROUP },
+                                    streamUrl = line
                                 )
                             )
                             pending = null
@@ -61,33 +55,21 @@ object M3uParser {
     }
 
     private fun parseExtInf(line: String): Pending {
-        // Split attributes from the trailing display name at the first unquoted comma.
-        val commaIndex = line.indexOf(',')
-        val attrsPart = if (commaIndex >= 0) line.substring(0, commaIndex) else line
-        val name = if (commaIndex >= 0) line.substring(commaIndex + 1).trim() else ""
-
+        val comma = line.indexOf(',')
+        val attrs = if (comma >= 0) line.substring(0, comma) else line
+        val name = if (comma >= 0) line.substring(comma + 1).trim() else ""
         var tvgId: String? = null
         var logo: String? = null
         var group = ""
-
-        ATTR_REGEX.findAll(attrsPart).forEach { match ->
-            val key = match.groupValues[1].lowercase()
-            val value = match.groupValues[2]
-            when (key) {
-                "tvg-id" -> tvgId = value.ifBlank { null }
-                "tvg-logo" -> logo = value.ifBlank { null }
-                "group-title" -> group = value
+        ATTR_REGEX.findAll(attrs).forEach { m ->
+            when (m.groupValues[1].lowercase()) {
+                "tvg-id" -> tvgId = m.groupValues[2].ifBlank { null }
+                "tvg-logo" -> logo = m.groupValues[2].ifBlank { null }
+                "group-title" -> group = m.groupValues[2]
             }
         }
         return Pending(tvgId, name, logo, group)
     }
 
-    private data class Pending(
-        val tvgId: String?,
-        val name: String,
-        val logoUrl: String?,
-        val group: String
-    )
-
-    const val DEFAULT_GROUP = "Ungrouped"
+    private data class Pending(val tvgId: String?, val name: String, val logo: String?, val group: String)
 }
