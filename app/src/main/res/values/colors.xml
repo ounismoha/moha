@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="bg">#0E1420</color>
+    <color name="bg_grad_start">#18253D</color>
+    <color name="bg_grad_end">#080C14</color>
     <color name="bg_rail">#0A0F18</color>
     <color name="bg_pane">#121A28</color>
     <color name="bg_card">#1C2533</color>
-    <color name="bg_drawer">#E6101826</color>
+    <color name="bg_drawer">#F20D1526</color>
     <color name="accent">#4C8BF5</color>
     <color name="accent_pink">#FF3D7F</color>
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#9AA7BD</color>
     <color name="focus_ring">#4C8BF5</color>
-    <color name="row_focus">#243047</color>
+    <!-- Soft highlight for focused list rows (category / channel) -->
+    <color name="row_focus">#3C4D6E</color>
+    <color name="row_selected">#232F46</color>
+    <!-- Translucent pill for the currently-selected nav section (no focus) -->
+    <color name="nav_pill_selected">#22FFFFFF</color>
+    <!-- Semi-transparent column fills -->
+    <color name="pane_mid">#E60F1726</color>
+    <color name="pane_content">#B30C121E</color>
 </resources>

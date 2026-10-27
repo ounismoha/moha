@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Main app theme: solid dark background behind the custom 3-pane UI. -->
+    <!-- Main app theme: diagonal dark gradient behind the custom 3-pane UI. -->
     <style name="Theme.NonoApp" parent="Theme.Leanback">
-        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:windowBackground">@drawable/bg_gradient</item>
         <item name="android:colorBackground">@color/bg</item>
     </style>
 
     <!-- Setup / Xtream wizard uses the Leanback GuidedStep look. -->
     <style name="Theme.NonoApp.Setup" parent="Theme.Leanback.GuidedStep" />
 
-    <!-- Nav rail item: icon + label, focusable with a highlight background. -->
+    <!-- Nav rail item: icon + label, focusable with a white pill highlight. -->
     <style name="NavItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -17,12 +17,13 @@
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:drawablePadding">14dp</item>
-        <item name="android:paddingHorizontal">12dp</item>
-        <item name="android:paddingVertical">12dp</item>
-        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:paddingVertical">13dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
         <item name="android:textColor">@color/nav_text</item>
         <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:drawableTint">@color/nav_text</item>
         <item name="android:duplicateParentState">false</item>
     </style>

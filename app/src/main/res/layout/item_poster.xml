@@ -24,11 +24,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
-            android:layout_margin="4dp"
-            android:background="@color/accent_pink"
-            android:paddingHorizontal="6dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/rating_badge"
+            android:paddingHorizontal="7dp"
             android:paddingVertical="2dp"
             android:textColor="#FFFFFF"
+            android:textStyle="bold"
             android:textSize="11sp"
             android:visibility="gone" />
     </FrameLayout>
@@ -37,9 +38,11 @@
         android:id="@+id/poster_title"
         android:layout_width="132dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:textColor="@color/text_primary"
+        android:layout_marginTop="7dp"
+        android:duplicateParentState="true"
+        android:textColor="@color/poster_title"
         android:textSize="12sp"
+        android:fontFamily="sans-serif-medium"
         android:maxLines="1"
         android:ellipsize="end" />
 </LinearLayout>

@@ -41,10 +41,10 @@ class PosterAdapter(
             holder.rating.visibility = View.GONE
         }
         if (!item.posterUrl.isNullOrBlank()) {
-            Glide.with(holder.image).load(item.posterUrl).placeholder(R.drawable.default_logo)
-                .error(R.drawable.default_logo).centerCrop().into(holder.image)
+            Glide.with(holder.image).load(item.posterUrl).placeholder(R.drawable.poster_placeholder)
+                .error(R.drawable.poster_placeholder).centerCrop().into(holder.image)
         } else {
-            holder.image.setImageResource(R.drawable.default_logo)
+            holder.image.setImageResource(R.drawable.poster_placeholder)
         }
         holder.itemView.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) onFocused(item) }
         holder.itemView.setOnClickListener { onClicked(item) }

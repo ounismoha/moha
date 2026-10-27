@@ -115,7 +115,10 @@ class IptvRepository(context: Context) {
                 client.liveCategories().forEachIndexed { i, c ->
                     catRows.add(CategoryEntity(playlistId = playlistId, remoteId = c.categoryId, name = c.name, kind = CategoryKind.LIVE, sortOrder = i))
                 }
-                val chRows = client.liveStreams().map { s ->
+                DebugLog.d("Import", "fetching live streams…")
+                val liveStreams = client.liveStreams()
+                DebugLog.d("Import", "live streams received: ${liveStreams.size}")
+                val chRows = liveStreams.map { s ->
                     ChannelEntity(
                         playlistId = playlistId,
                         categoryRemoteId = s.categoryId,
@@ -128,13 +131,18 @@ class IptvRepository(context: Context) {
                     )
                 }
                 channels.insertAllChunked(chRows)
+                DebugLog.d("Import", "live channels saved")
             }
 
             if (includeVod) {
+                DebugLog.d("Import", "fetching VOD categories…")
                 client.vodCategories().forEachIndexed { i, c ->
                     catRows.add(CategoryEntity(playlistId = playlistId, remoteId = c.categoryId, name = c.name, kind = CategoryKind.VOD, sortOrder = i))
                 }
-                val movieRows = client.vodStreams().map { m ->
+                DebugLog.d("Import", "fetching VOD streams…")
+                val vodStreams = client.vodStreams()
+                DebugLog.d("Import", "VOD streams received: ${vodStreams.size}")
+                val movieRows = vodStreams.map { m ->
                     VodEntity(
                         playlistId = playlistId,
                         categoryRemoteId = m.categoryId,
@@ -154,11 +162,14 @@ class IptvRepository(context: Context) {
                     )
                 }
                 vod.insertAllChunked(movieRows)
+                DebugLog.d("Import", "movies saved; fetching series…")
 
+                val seriesRemote = client.series()
+                DebugLog.d("Import", "series received: ${seriesRemote.size}")
                 client.seriesCategories().forEachIndexed { i, c ->
                     catRows.add(CategoryEntity(playlistId = playlistId, remoteId = c.categoryId, name = c.name, kind = CategoryKind.SERIES, sortOrder = i))
                 }
-                val seriesRows = client.series().map { s ->
+                val seriesRows = seriesRemote.map { s ->
                     VodEntity(
                         playlistId = playlistId,
                         categoryRemoteId = s.categoryId,

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Subtle diagonal navy gradient behind the whole UI (lighter top-left). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:type="linear"
+        android:angle="135"
+        android:startColor="@color/bg_grad_start"
+        android:centerColor="@color/bg"
+        android:endColor="@color/bg_grad_end" />
+</shape>

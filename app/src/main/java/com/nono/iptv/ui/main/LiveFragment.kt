@@ -63,8 +63,8 @@ class LiveFragment : Fragment(R.layout.fragment_live) {
             )
             repo.liveCategories(pl.id).forEach { cats.add(CatItem(it.remoteId, it.name)) }
             categoryAdapter.submit(cats)
-            // Show the first real/virtual category immediately.
-            loadChannels(cats.firstOrNull()?.remoteId ?: IptvRepository.CAT_ALL)
+            // Open on "All channels" (Favorites is empty until the user adds some).
+            loadChannels(IptvRepository.CAT_ALL)
         }
     }
 

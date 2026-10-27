@@ -9,7 +9,7 @@
         android:id="@+id/live_categories"
         android:layout_width="290dp"
         android:layout_height="match_parent"
-        android:background="#E6121A28"
+        android:background="@color/pane_mid"
         android:paddingHorizontal="10dp"
         android:paddingVertical="16dp"
         android:clipToPadding="false" />

@@ -12,6 +12,9 @@ import com.nono.iptv.ui.settings.DebugActivity
 class PlaylistTypeFragment : Fragment(R.layout.fragment_playlist_type) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        view.findViewById<Button>(R.id.btn_qr).setOnClickListener {
+            (activity as? SetupActivity)?.showFragment(QrSetupFragment())
+        }
         view.findViewById<Button>(R.id.btn_xtream).setOnClickListener {
             (activity as? SetupActivity)?.showFragment(XtreamFormFragment())
         }

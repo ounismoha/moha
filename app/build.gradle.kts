@@ -77,4 +77,8 @@ dependencies {
 
     // Image loading (channel logos) — used via Glide.with(), no annotation processor needed
     implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // QR pairing: embedded web server (phone enters credentials) + QR code generation
+    implementation("org.nanohttpd:nanohttpd:2.3.1")
+    implementation("com.google.zxing:core:3.5.3")
 }

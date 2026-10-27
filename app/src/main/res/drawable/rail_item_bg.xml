@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_focused="true"><shape android:shape="rectangle"><solid android:color="@color/text_primary"/><corners android:radius="10dp"/></shape></item>
-    <item android:state_selected="true"><shape android:shape="rectangle"><solid android:color="@color/row_focus"/><corners android:radius="10dp"/></shape></item>
-    <item><shape android:shape="rectangle"><solid android:color="@android:color/transparent"/></shape></item>
+    <!-- Focused: solid white pill with dark text/icon (nav_text handles colors). -->
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/text_primary" />
+            <corners android:radius="26dp" />
+        </shape>
+    </item>
+    <!-- Current section (not focused): soft translucent pill. -->
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/nav_pill_selected" />
+            <corners android:radius="26dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <corners android:radius="26dp" />
+        </shape>
+    </item>
 </selector>

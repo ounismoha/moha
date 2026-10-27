@@ -37,6 +37,7 @@
             android:textSize="15sp"
             android:layout_marginBottom="24dp" />
 
+        <Button android:id="@+id/btn_qr" android:layout_width="380dp" android:layout_height="wrap_content" android:text="📱 Connexion par téléphone (QR)" android:layout_marginBottom="12dp" />
         <Button android:id="@+id/btn_xtream" android:layout_width="380dp" android:layout_height="wrap_content" android:text="Xtream Codes" android:layout_marginBottom="12dp" />
         <Button android:id="@+id/btn_m3u" android:layout_width="380dp" android:layout_height="wrap_content" android:text="M3U / URL" android:layout_marginBottom="12dp" />
         <Button android:id="@+id/btn_debug" android:layout_width="380dp" android:layout_height="wrap_content" android:text="Débogage" />
