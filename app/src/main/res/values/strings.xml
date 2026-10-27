@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">nono app</string>
+    <string name="browse_title">nono app</string>
+    <string name="loading_playlist">Loading channels…</string>
+    <string name="no_channels">No channels yet</string>
+    <string name="default_group">Ungrouped</string>
+</resources>
